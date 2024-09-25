@@ -1,0 +1,28 @@
+{
+  "name": "jcb-library",
+  "version": "1.0.0",
+  "description": "JCB Library",
+  "main": "index.js",
+  "scripts": {
+    "build:all": "lerna run build",
+    "test:all": "lerna run test",
+    "publish:all": "lerna publish from-package --registry https://npm.pkg.github.com --yes --summary-file"
+  },
+  "repository": "github:jeordanecarlosbatista/jcb-library",
+  "workspaces": [
+    "packages/*"
+  ],
+  "keywords": [],
+  "author": "Jeordane Carlos Batista e Jean Carlos Batista",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jeordanecarlosbatista/jcb-library/issues"
+  },
+  "homepage": "https://github.com/jeordanecarlosbatista/jcb-library#readme",
+  "devDependencies": {
+    "lerna": "^8.1.8"
+  },
+  "engines": {
+    "node": "20.17.0"
+  }
+}

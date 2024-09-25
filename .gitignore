@@ -1,0 +1,35 @@
+# Node.js
+node_modules/
+
+# Arquivos de compilação TypeScript
+*.js
+*.js.map
+*.d.ts
+
+# Arquivos temporários
+*.log
+*.tmp
+
+
+# Editor config
+.vscode/
+
+# Dependendo do seu ambiente de desenvolvimento, você pode adicionar outros arquivos/diretórios
+
+# Exemplo para o ambiente de desenvolvimento Visual Studio
+.vs/
+
+# Exemplo para o ambiente de desenvolvimento WebStorm
+.idea/
+*.iml
+
+# Exemplo para o ambiente de desenvolvimento Visual Studio Code
+.vscode/
+
+coverage
+
+database
+
+.env
+
+dist
