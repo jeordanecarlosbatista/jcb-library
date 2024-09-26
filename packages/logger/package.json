@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json && tsc-alias",
-    "lint:fix": "eslint \"{lib,test}/**/*.ts\" --fix",
+    "eslint": "eslint \"{lib,test}/**/*.ts\" --fix",
     "clean": "rimraf dist",
     "test": "jest",
     "test:watch": "jest --watch",
