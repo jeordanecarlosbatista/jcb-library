@@ -1,7 +1,7 @@
 {
   "name": "jcb-library",
   "version": "1.0.0",
-  "description": "JCB Library",
+  "description": "JCB Library ",
   "main": "index.js",
   "scripts": {
     "build:all": "lerna run build",
