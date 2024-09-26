@@ -1,11 +1,12 @@
 {
   "name": "jcb-library",
   "version": "1.0.0",
-  "description": "JCB Library ",
+  "description": "JCB Library",
   "main": "index.js",
   "scripts": {
     "build:all": "lerna run build",
     "test:all": "lerna run test",
+    "eslint:all": "lerna run eslint",
     "publish:all": "lerna publish from-package --registry https://npm.pkg.github.com --yes --summary-file"
   },
   "repository": "github:jeordanecarlosbatista/jcb-library",
