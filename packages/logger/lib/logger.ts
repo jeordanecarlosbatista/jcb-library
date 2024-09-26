@@ -9,7 +9,7 @@ export type LevelType = "info" | "warn" | "debug" | "error" | "trace";
 
 export interface LoggerOptions {
   message: string;
-  logData?: any;
+  logData?: unknown;
   level?: LevelType;
 }
 
@@ -38,7 +38,7 @@ export abstract class Logger {
     return this.requestId;
   }
 
-  private buildLogData = (data: any) => {
+  private buildLogData = (data: unknown) => {
     if (this.clientOptions.prettyPrint) return JSON.stringify(data, null, 2);
     return JSON.stringify(data);
   };
