@@ -1,5 +1,5 @@
 {
-  "name": "@jcb/logger",
+  "name": "@jeordanecarlosbatista/logger",
   "version": "1.0.0",
   "description": "JCB Logger",
   "main": "index.js",
@@ -69,5 +69,5 @@
   "engines": {
     "node": "20.17.0"
   },
-  "gitHead": "d68b8d8f0a937b450640a2248feba542c3408102"
+  "gitHead": "179bb2398849ae38c3027fd9cdc02f6501d7dce2"
 }
