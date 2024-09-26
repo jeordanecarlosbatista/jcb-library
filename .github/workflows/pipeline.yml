@@ -58,6 +58,9 @@ jobs:
     needs: [build, test]
     runs-on: ubuntu-latest
 
+    env:
+      GITHUB_TOKEN: ${{ secrets.JCB_GITHUB_PACKAGE_TOKEN }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
