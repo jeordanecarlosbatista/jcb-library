@@ -1,5 +1,5 @@
 {
-  "name": "@jeordanecarlosbatista/logger",
+  "name": "@jeordanecarlosbatista/jcb-logger",
   "version": "1.0.0",
   "description": "JCB Logger",
   "main": "index.js",
