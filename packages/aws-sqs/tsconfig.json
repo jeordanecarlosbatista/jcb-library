@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "esModuleInterop": true,
+    "baseUrl": "lib",
+    "outDir": "./dist",
+    "paths": {
+      "@/*": ["./*"],
+      "@/test/*": ["../test/*"]
+    }
+  }
+}

@@ -1,0 +1,73 @@
+# Node.js
+node_modules/
+
+# Arquivos de compilação TypeScript
+/dist/
+/tsconfig.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Dependências
+# package-lock.json
+# yarn.lock
+
+# Ambiente
+.env
+.env-local
+.env-prod
+.env-dev
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Arquivos de configuração
+.eslintcache
+.eslintignore
+.eslintrc
+.prettierignore
+.prettierrc
+
+# VSCode
+.vscode/
+
+# Logs e arquivos temporários
+logs
+*.swp
+*.bak
+*.tmp
+
+# Sublimes Text
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.tmLanguage.cache
+
+# Yarn
+.yarn-integrity
+.yarn-metadata
+.yarn-test
+yarn-error.log
+yarn-debug.log*
+yarn.lock
+
+coverage
+
+scripts/*.local.*
+scripts/operation/source.csv
+scripts/operation/upload-photo/photos
+
+scripts/**/**/*.source.csv
+scripts/operation/create-product/source*
+scripts/operation/partner/source*
+
+scri
+
+
+database
