@@ -2,6 +2,7 @@
   "$schema": "node_modules/lerna/schemas/lerna-schema.json",
   "npmClient": "npm",
   "version": "independent",
+  "packages": ["packages/*"],
   "command": {
     "publish": {
       "registry": "https://npm.pkg.github.com/"

@@ -1,11 +1,8 @@
 {
-  "name": "@jeordanecarlosbatista/jcb-logger",
+  "name": "@jeordanecarlosbatista/jcb-aws-sqs",
   "version": "1.0.0",
-  "description": "JCB Logger",
+  "description": "AWS SQS",
   "main": "index.js",
-  "publishConfig": {
-    "access": "public"
-  },
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./dist/index.js"
@@ -24,6 +21,8 @@
   "devDependencies": {
     "@eslint/js": "^9.11.1",
     "@types/jest": "^29.5.8",
+    "async-await-retry": "^2.1.0",
+    "dotenv": "^16.4.5",
     "eslint": "^9.11.1",
     "globals": "^15.9.0",
     "jest": "^29.7.0",
@@ -35,6 +34,7 @@
   },
   "jest": {
     "preset": "ts-jest",
+    "testTimeout": 30000,
     "moduleFileExtensions": [
       "js",
       "ts",
@@ -70,7 +70,11 @@
     "testEnvironment": "node"
   },
   "dependencies": {
+    "@aws-sdk/client-sqs": "^3.658.1",
     "uuid": "^10.0.0"
+  },
+  "peerDependencies": {
+    "@jeordanecarlosbatista/jcb-logger": "^1.0.0"
   },
   "engines": {
     "node": "20.17.0"

@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "4566:4566"
+      - "4571:4571"
+    environment:
+      - SERVICES=sqs
+      - DEBUG=1
+    volumes:
+      - ./scripts/localstack.sh:/etc/localstack/init/ready.d/localstack.sh
