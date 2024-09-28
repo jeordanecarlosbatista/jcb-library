@@ -8,7 +8,7 @@ import retry from "async-await-retry";
 import { SQSProvider } from "@/sqs-provider";
 import assert from "node:assert";
 import { SQSProducerClient } from "@/sqs-producer";
-import { ConsoleLogger } from "@jeordanecarlosbatista/logger";
+import { ConsoleLogger } from "@jeordanecarlosbatista/jcb-logger";
 
 const envs = {
   AWS_SQS_ENDPOINT: process.env.AWS_SQS_ENDPOINT,

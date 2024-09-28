@@ -4,7 +4,7 @@ import {
   MessageEnqueuer,
   MessagePayload,
 } from "@/producer";
-import { Logger } from "@jeordanecarlosbatista/logger";
+import { Logger } from "@jeordanecarlosbatista/jcb-logger";
 
 export class SQSProducerClient implements MessageEnqueuer {
   constructor(

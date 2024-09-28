@@ -71,8 +71,10 @@
   },
   "dependencies": {
     "@aws-sdk/client-sqs": "^3.658.1",
-    "@jeordanecarlosbatista/logger": "^1.0.0",
     "uuid": "^10.0.0"
+  },
+  "peerDependencies": {
+    "@jeordanecarlosbatista/jcb-logger": "^1.0.0"
   },
   "engines": {
     "node": "20.17.0"
