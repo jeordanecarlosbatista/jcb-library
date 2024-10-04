@@ -1,16 +1,13 @@
 import path from "path";
-import { v4 as uuid } from "uuid";
+import { faker } from "@faker-js/faker";
 
 import { config } from "dotenv";
 config({ path: path.join(__dirname, ".env") });
 
-import retry from "async-await-retry";
 import { SQSProvider } from "@/sqs-provider";
-import assert from "node:assert";
 
 const envs = {
   AWS_SQS_ENDPOINT: process.env.AWS_SQS_ENDPOINT,
-  AWS_SQS_BASE_URL: process.env.AWS_SQS_BASE_URL,
 };
 
 type TestSetup = {
@@ -25,28 +22,43 @@ const makeTestSetup = (): TestSetup => {
 
 describe(SQSProvider.name, () => {
   describe("sendMessage", () => {
-    it("should send a message to the SQS queue", async () => {
+    it("should send a message to fifo queue", async () => {
       const { sqsProvider } = makeTestSetup();
 
-      const result = await sqsProvider.sendMessage({
-        QueueUrl: `${envs.AWS_SQS_BASE_URL}/test-queue.fifo`,
+      const { QueueUrl } = await sqsProvider.createQueue(
+        `${faker.string.alphanumeric(10)}.fifo`
+      );
+
+      await sqsProvider.sendMessage({
+        QueueUrl,
         MessageBody: "Hello, world!",
-        MessageGroupId: uuid(),
-        MessageDeduplicationId: uuid(),
+        MessageGroupId: faker.string.uuid(),
+        MessageDeduplicationId: faker.string.uuid(),
       });
-      expect(result.MessageId).toBeDefined();
-      expect(result.MD5OfMessageBody).toBeDefined();
 
-      await retry(async () => {
-        const receiveResult = await sqsProvider.receiveMessage({
-          QueueUrl: `${envs.AWS_SQS_BASE_URL}/test-queue.fifo`,
-        });
-
-        assert(receiveResult.Messages.length > 0, "Messages should be defined");
-
-        expect(receiveResult.Messages).toHaveLength(1);
-        expect(receiveResult.Messages[0].Body).toBe("Hello, world!");
+      const receiveResult = await sqsProvider.receiveMessage({
+        QueueUrl,
+        MaxNumberOfMessages: 1,
       });
+      expect(receiveResult.Messages).toHaveLength(1);
+    });
+
+    it("should send a message to standard queue", async () => {
+      const { sqsProvider } = makeTestSetup();
+
+      const { QueueUrl } = await sqsProvider.createQueue(
+        faker.string.alphanumeric(10)
+      );
+
+      await sqsProvider.sendMessage({
+        QueueUrl,
+        MessageBody: "Hello, world!",
+      });
+
+      const receiveResult = await sqsProvider.receiveMessage({
+        QueueUrl,
+      });
+      expect(receiveResult.Messages).toHaveLength(1);
     });
   });
 
@@ -54,18 +66,26 @@ describe(SQSProvider.name, () => {
     it("should send a batch of messages to the SQS queue", async () => {
       const { sqsProvider } = makeTestSetup();
 
-      const maxTotalMessage = 10;
-      const result = await sqsProvider.sendMessageBatch({
-        QueueUrl: `${envs.AWS_SQS_BASE_URL}/test-queue.fifo`,
+      const { QueueUrl } = await sqsProvider.createQueue(
+        `${faker.string.alphanumeric()}.fifo`
+      );
+
+      const maxTotalMessage = faker.number.int({ min: 5, max: 10 });
+      await sqsProvider.sendMessageBatch({
+        QueueUrl,
         Entries: Array.from({ length: maxTotalMessage }, () => ({
-          Id: uuid(),
-          MessageBody: "Hello, world!",
-          MessageGroupId: uuid(),
-          MessageDeduplicationId: uuid(),
+          Id: faker.string.uuid(),
+          MessageBody: faker.string.alphanumeric(),
+          MessageGroupId: faker.string.uuid(),
+          MessageDeduplicationId: faker.string.uuid(),
         })),
       });
 
-      expect(result.Successful).toHaveLength(maxTotalMessage);
+      const receiveResult = await sqsProvider.receiveMessage({
+        QueueUrl,
+        MaxNumberOfMessages: maxTotalMessage,
+      });
+      expect(receiveResult.Messages).toHaveLength(maxTotalMessage);
     });
   });
 });

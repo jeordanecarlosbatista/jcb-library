@@ -12,7 +12,7 @@
     "eslint": "eslint \"{lib,test}/**/*.ts\" --fix",
     "clean": "rimraf dist",
     "test": "jest",
-    "test:watch": "jest --watch",
+    "test:watch": "jest --watch --detectOpenHandles",
     "test:cov": "jest --coverage"
   },
   "keywords": [],
@@ -20,6 +20,7 @@
   "license": "UNLICENSED",
   "devDependencies": {
     "@eslint/js": "^9.11.1",
+    "@faker-js/faker": "^9.0.3",
     "@types/jest": "^29.5.8",
     "async-await-retry": "^2.1.0",
     "dotenv": "^16.4.5",
@@ -71,6 +72,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-sqs": "^3.658.1",
+    "sqs-consumer": "^11.0.2",
     "uuid": "^10.0.0"
   },
   "peerDependencies": {
