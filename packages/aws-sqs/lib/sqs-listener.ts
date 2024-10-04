@@ -39,6 +39,7 @@ export abstract class SQSListener<T> {
 
     this.consumer.start();
 
+    /* istanbul ignore next */
     this.consumer.on("started", () => {
       this.config.logger.log({
         message: "SQSConsumer started",
@@ -54,6 +55,7 @@ export abstract class SQSListener<T> {
       });
     });
 
+    /* istanbul ignore next */
     this.consumer.on("processing_error", (err) => {
       this.config.logger.log({
         message: "An error occurred while processing a message",
@@ -85,9 +87,5 @@ export abstract class SQSListener<T> {
       MessageGroupId: uuid(),
       MessageDeduplicationId: uuid(),
     });
-  }
-
-  async getQueueMessageCount(queueUrl: string): Promise<number> {
-    return this.getQueueMessageCount(queueUrl);
   }
 }

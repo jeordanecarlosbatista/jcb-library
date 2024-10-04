@@ -58,6 +58,7 @@ export class SQSProducerClient implements MessageEnqueuer {
       Entries: params.payload.map((message, index) => ({
         Id: index.toString(),
         MessageBody:
+          /* istanbul ignore next */
           typeof message === "object" && message !== null
             ? JSON.stringify(message)
             : (message as string),

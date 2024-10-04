@@ -3,7 +3,6 @@ import {
   CreateQueueCommandInput,
   DeleteMessageCommand,
   DeleteMessageCommandInput,
-  GetQueueAttributesCommand,
   ReceiveMessageCommand,
   ReceiveMessageCommandInput,
   SendMessageBatchCommand,
@@ -49,17 +48,6 @@ export class SQSProvider {
 
   async deleteMessage(command: DeleteMessageCommandInput) {
     return this.client.send(new DeleteMessageCommand(command));
-  }
-
-  async getQueueMessageCount(queueUrl: string): Promise<number> {
-    const attributes = await this.client.send(
-      new GetQueueAttributesCommand({
-        QueueUrl: queueUrl,
-        AttributeNames: ["ApproximateNumberOfMessages"],
-      })
-    );
-
-    return parseInt(attributes.Attributes.ApproximateNumberOfMessages);
   }
 
   destroy() {
