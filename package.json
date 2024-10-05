@@ -4,7 +4,7 @@
   "description": "JCB Library",
   "main": "index.js",
   "scripts": {
-    "build:all": "lerna run build",
+    "build:all": "lerna run build --verbose",
     "test:all": "lerna run test:cov",
     "eslint:all": "lerna run eslint",
     "publish:all": "lerna publish from-package --registry https://npm.pkg.github.com --yes --summary-file"
