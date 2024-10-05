@@ -4,6 +4,7 @@
     "esModuleInterop": true,
     "baseUrl": "lib",
     "outDir": "./dist",
+    "skipLibCheck": true,
     "paths": {
       "@/*": ["./*"],
       "@/test/*": ["../test/*"]
