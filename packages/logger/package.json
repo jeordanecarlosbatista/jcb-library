@@ -1,6 +1,6 @@
 {
   "name": "@jeordanecarlosbatista/jcb-logger",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "JCB Logger",
   "main": "index.js",
   "publishConfig": {
@@ -10,6 +10,9 @@
   "exports": {
     ".": "./dist/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json && tsc-alias",
     "eslint": "eslint \"{lib,test}/**/*.ts\" --fix",
