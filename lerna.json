@@ -3,7 +3,6 @@
   "npmClient": "npm",
   "version": "independent",
   "packages": ["packages/*"],
-  "useNx": true,
   "command": {
     "publish": {
       "registry": "https://npm.pkg.github.com/"
