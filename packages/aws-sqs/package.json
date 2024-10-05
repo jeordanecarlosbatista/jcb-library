@@ -1,12 +1,15 @@
 {
   "name": "@jeordanecarlosbatista/jcb-aws-sqs",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "AWS SQS",
   "main": "index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./dist/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json && tsc-alias",
     "eslint": "eslint \"{lib,test}/**/*.ts\" --fix",
@@ -78,7 +81,7 @@
     "zod": "^3.23.8"
   },
   "peerDependencies": {
-    "@jeordanecarlosbatista/jcb-logger": "^1.0.0"
+    "@jeordanecarlosbatista/jcb-logger": "^1.0.1"
   },
   "engines": {
     "node": "20.17.0"
