@@ -8,7 +8,9 @@ import { ConsoleLogger } from "@jeordanecarlosbatista/jcb-logger";
 
 class TestEnqueuer extends Enqueuer {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async enqueueMessage(_params: EnqueueParams): Promise<void> {}
+  async enqueueMessage(message: string | object): Promise<void> {
+    return;
+  }
 }
 
 const makeTestSetup = () => {
