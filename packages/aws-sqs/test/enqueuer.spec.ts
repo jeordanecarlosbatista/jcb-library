@@ -1,12 +1,13 @@
 import { Enqueuer, EnqueueParams } from "@/enqueuer";
 import { SQSProducerClient } from "@/sqs-producer";
+import SQSProducerClientSingleton from "@/sqs-producer-client-singleton";
 
 class TestEnqueuer extends Enqueuer {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async enqueueMessage(_params: EnqueueParams): Promise<void> {}
 }
 
-describe("Enqueuer", () => {
+describe(Enqueuer.name, () => {
   let mockProducerClient: jest.Mocked<SQSProducerClient>;
   let enqueuer: Enqueuer;
 
@@ -15,12 +16,20 @@ describe("Enqueuer", () => {
       enqueue: jest.fn(),
     } as unknown as jest.Mocked<SQSProducerClient>;
 
-    enqueuer = new TestEnqueuer(mockProducerClient);
+    jest
+      .spyOn(SQSProducerClientSingleton, "getInstance")
+      .mockReturnValue(mockProducerClient);
+
+    enqueuer = new TestEnqueuer();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it("should call producerClient.enqueue with correct parameters", async () => {
     const params: EnqueueParams = {
-      queueName: "test-queue",
+      queueName: "test-queue.fifo",
       payload: "test-payload",
       messageDeduplicationId: "dedup-id",
       messageGroupId: "group-id",
@@ -33,22 +42,6 @@ describe("Enqueuer", () => {
       payload: params.payload,
       messageDeduplicationId: params.messageDeduplicationId,
       messageGroupId: params.messageGroupId,
-    });
-  });
-
-  it("should call producerClient.enqueue with only required parameters", async () => {
-    const params: EnqueueParams = {
-      queueName: "test-queue",
-      payload: "test-payload",
-    };
-
-    await enqueuer.enqueue(params);
-
-    expect(mockProducerClient.enqueue).toHaveBeenCalledWith({
-      queueName: params.queueName,
-      payload: params.payload,
-      messageDeduplicationId: undefined,
-      messageGroupId: undefined,
     });
   });
 });

@@ -11,11 +11,7 @@ import {
 } from "@aws-sdk/client-sqs";
 
 export class SQSProvider {
-  private client: SQSClient;
-
-  constructor(endpoint: string) {
-    this.client = new SQSClient({ endpoint });
-  }
+  constructor(private readonly client: SQSClient) {}
 
   async createQueue(
     queueName: string,

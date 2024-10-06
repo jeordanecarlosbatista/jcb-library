@@ -1,18 +1,10 @@
-import path from "path";
 import { v4 as uuid } from "uuid";
-
-import { config } from "dotenv";
-config({ path: path.join(__dirname, ".env") });
 
 import { SQSProvider } from "@/sqs-provider";
 import { SQSProducerClient } from "@/sqs-producer";
 import { ConsoleLogger } from "@jeordanecarlosbatista/jcb-logger";
 import { faker } from "@faker-js/faker/.";
-
-const envs = {
-  AWS_SQS_ENDPOINT: process.env.AWS_SQS_ENDPOINT,
-  AWS_SQS_BASE_URL: process.env.AWS_SQS_BASE_URL,
-};
+import { SQSClient } from "@aws-sdk/client-sqs";
 
 type TestSetup = {
   sqsProducer: SQSProducerClient;
@@ -20,7 +12,9 @@ type TestSetup = {
 };
 
 const makeTestSetup = (): TestSetup => {
-  const sqsProvider = new SQSProvider(envs.AWS_SQS_ENDPOINT);
+  const sqsCLient = new SQSClient({ endpoint: process.env.AWS_SQS_ENDPOINT });
+
+  const sqsProvider = new SQSProvider(sqsCLient);
   const logger = new ConsoleLogger();
 
   const sqsProducer = new SQSProducerClient(sqsProvider, logger);

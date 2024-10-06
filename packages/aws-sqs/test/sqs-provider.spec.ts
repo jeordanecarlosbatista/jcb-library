@@ -5,17 +5,16 @@ import { config } from "dotenv";
 config({ path: path.join(__dirname, ".env") });
 
 import { SQSProvider } from "@/sqs-provider";
-
-const envs = {
-  AWS_SQS_ENDPOINT: process.env.AWS_SQS_ENDPOINT,
-};
+import { SQSClient } from "@aws-sdk/client-sqs";
 
 type TestSetup = {
   sqsProvider: SQSProvider;
 };
 
 const makeTestSetup = (): TestSetup => {
-  const sqsProvider = new SQSProvider(envs.AWS_SQS_ENDPOINT);
+  const sqsCLient = new SQSClient({ endpoint: process.env.AWS_SQS_ENDPOINT });
+
+  const sqsProvider = new SQSProvider(sqsCLient);
 
   return { sqsProvider };
 };
