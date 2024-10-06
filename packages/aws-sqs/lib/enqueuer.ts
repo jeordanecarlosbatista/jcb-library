@@ -15,7 +15,7 @@ export class SQSEnqueuerProvider implements Enqueuer {
   private readonly producerClient = SQSProducerClientSingleton.getInstance();
 
   async enqueue(params: EnqueueParams): Promise<void> {
-    this.producerClient.enqueue({
+    await this.producerClient.enqueue({
       queueName: params.queueName,
       payload: params.payload,
       messageDeduplicationId: params.messageDeduplicationId,
