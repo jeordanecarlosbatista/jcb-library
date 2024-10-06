@@ -8,7 +8,7 @@ export type MessageBatchPayload = SendMessageBatchCommandInput;
 
 export type EnqueueMessageParams = {
   queueName: string;
-  payload: string | undefined;
+  payload: string | object | Array<string | object>;
   messageDeduplicationId?: string;
   messageGroupId?: string;
   attributes?: MessagePayload["MessageAttributes"];
@@ -23,6 +23,5 @@ export type EnqueueMessageBatchParams = {
 };
 
 export interface MessageEnqueuer {
-  enqueueMessage(params: EnqueueMessageParams): Promise<void>;
-  enqueueMessageBatch(params: EnqueueMessageBatchParams): Promise<void>;
+  enqueue(params: EnqueueMessageParams): Promise<void>;
 }

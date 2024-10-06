@@ -8,11 +8,11 @@ import { Logger } from "@jeordanecarlosbatista/jcb-logger";
 
 export class SQSProducerClient implements MessageEnqueuer {
   constructor(
-    private readonly sqsClient: SQSProvider,
+    private readonly provider: SQSProvider,
     private readonly logger: Logger
   ) {}
 
-  async enqueueMessage(params: EnqueueMessageParams): Promise<void> {
+  async enqueue(params: EnqueueMessageParams): Promise<void> {
     this.logger.log({
       level: "info",
       message: "Sending message",
@@ -23,15 +23,23 @@ export class SQSProducerClient implements MessageEnqueuer {
       },
     });
 
-    await this.sqsClient.sendMessage({
-      QueueUrl: `${process.env.SQS_QUEUE_BASE_URL}/${params.queueName}`,
-      MessageBody: params.payload,
-      MessageDeduplicationId: params.messageDeduplicationId,
-      MessageGroupId: params.messageGroupId,
-      MessageAttributes: {
-        ...params.attributes,
-      },
-    });
+    if (Array.isArray(params.payload)) {
+      await this.sendMessageBatch({
+        queueName: params.queueName,
+        payload: params.payload,
+        messageDeduplicationId: params.messageDeduplicationId,
+        messageGroupId: params.messageGroupId,
+        attributes: params.attributes,
+      });
+    } else {
+      await this.sendMessage({
+        queueName: params.queueName,
+        payload: params.payload,
+        messageDeduplicationId: params.messageDeduplicationId,
+        messageGroupId: params.messageGroupId,
+        attributes: params.attributes,
+      });
+    }
 
     this.logger.log({
       level: "info",
@@ -44,16 +52,28 @@ export class SQSProducerClient implements MessageEnqueuer {
     });
   }
 
-  async enqueueMessageBatch(params: EnqueueMessageBatchParams): Promise<void> {
-    this.logger.log({
-      message: "Sending message",
-      logData: {
-        context: "sqs",
-        timestamp: new Date().toISOString(),
-        sqsData: { queueName: params.queueName, payload: params.payload },
+  private async sendMessage(params: EnqueueMessageParams): Promise<void> {
+    await this.provider.sendMessage({
+      QueueUrl: `${process.env.SQS_QUEUE_BASE_URL}/${params.queueName}`,
+      MessageBody:
+        /* istanbul ignore next */
+        typeof params.payload === "string"
+          ? params.payload
+          : typeof params.payload === "object"
+          ? JSON.stringify(params.payload)
+          : "",
+      MessageDeduplicationId: params.messageDeduplicationId,
+      MessageGroupId: params.messageGroupId,
+      MessageAttributes: {
+        ...params.attributes,
       },
     });
-    await this.sqsClient.sendMessageBatch({
+  }
+
+  private async sendMessageBatch(
+    params: EnqueueMessageBatchParams
+  ): Promise<void> {
+    await this.provider.sendMessageBatch({
       QueueUrl: `${process.env.SQS_QUEUE_BASE_URL}/${params.queueName}`,
       Entries: params.payload.map((message, index) => ({
         Id: index.toString(),
@@ -68,14 +88,6 @@ export class SQSProducerClient implements MessageEnqueuer {
           ...params.attributes,
         },
       })),
-    });
-    this.logger.log({
-      message: "Message sent",
-      logData: {
-        context: "sqs",
-        timestamp: new Date().toISOString(),
-        sqsData: { queueName: params.queueName, payload: params.payload },
-      },
     });
   }
 }
