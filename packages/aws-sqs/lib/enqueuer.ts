@@ -1,5 +1,5 @@
 import { EnqueueMessageParams } from "./producer";
-import { SQSProducerClient } from "./sqs-producer";
+import SQSProducerClientSingleton from "./sqs-producer-client-singleton";
 
 export interface EnqueueParams {
   queueName: string;
@@ -9,7 +9,9 @@ export interface EnqueueParams {
 }
 
 export abstract class Enqueuer {
-  constructor(private readonly producerClient: SQSProducerClient) {}
+  private readonly producerClient = SQSProducerClientSingleton.getInstance();
+
+  constructor() {}
 
   abstract enqueueMessage(params: EnqueueMessageParams): Promise<void>;
 

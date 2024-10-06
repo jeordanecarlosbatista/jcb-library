@@ -1,6 +1,6 @@
 {
   "name": "@jeordanecarlosbatista/jcb-aws-sqs",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "AWS SQS",
   "main": "index.js",
   "types": "./dist/index.d.ts",
@@ -44,6 +44,9 @@
       "js",
       "ts",
       "json"
+    ],
+    "setupFiles": [
+      "<rootDir>/test/setup-env.js"
     ],
     "rootDir": ".",
     "testRegex": ".*\\.spec\\.ts$",
