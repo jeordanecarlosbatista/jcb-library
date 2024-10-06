@@ -36,7 +36,7 @@ describe(SQSProducerClient.name, () => {
       const queueName = `${faker.string.alphanumeric(10)}.fifo`;
       const { QueueUrl } = await sqsProvider.createQueue(queueName);
 
-      await sqsProducer.enqueueMessage({
+      await sqsProducer.enqueue({
         queueName,
         payload: "Hello, world!",
         messageDeduplicationId: uuid(),
@@ -55,7 +55,7 @@ describe(SQSProducerClient.name, () => {
       const queueName = faker.string.alphanumeric(10);
       const { QueueUrl } = await sqsProvider.createQueue(queueName);
 
-      await sqsProducer.enqueueMessage({
+      await sqsProducer.enqueue({
         queueName,
         payload: "Hello, world!",
       });
@@ -65,47 +65,30 @@ describe(SQSProducerClient.name, () => {
       });
       expect(receiveResult.Messages).toHaveLength(1);
     });
-  });
 
-  describe("enqueueMessageBatch", () => {
-    it("should enqueue fifo queue", async () => {
-      const { sqsProducer, sqsProvider } = makeTestSetup();
+    it("should enqueue messages in batch", async () => {
+      const { sqsProvider, sqsProducer } = makeTestSetup();
 
-      const queueName = `${faker.string.uuid()}.fifo`;
+      const queueName = faker.string.alphanumeric(10);
       const { QueueUrl } = await sqsProvider.createQueue(queueName);
 
-      const maxTotalMessage = faker.number.int({ min: 1, max: 10 });
-      await sqsProducer.enqueueMessageBatch({
+      const messages = [
+        { Id: uuid(), MessageBody: "Message 1" },
+        { Id: uuid(), MessageBody: "Message 2" },
+        { Id: uuid(), MessageBody: "Message 3" },
+      ];
+
+      await sqsProducer.enqueue({
         queueName,
-        payload: Array.from({ length: maxTotalMessage }, () => "Hello, world!"),
-        messageDeduplicationId: uuid(),
-        messageGroupId: uuid(),
+        payload: messages,
       });
 
       const receiveResult = await sqsProvider.receiveMessage({
         QueueUrl,
-      });
-      expect(receiveResult.Messages).toHaveLength(1);
-    });
-
-    it("should send message standard queue", async () => {
-      const { sqsProducer, sqsProvider } = makeTestSetup();
-
-      const queueName = `${faker.string.uuid()}.fifo`;
-      const { QueueUrl } = await sqsProvider.createQueue(queueName);
-
-      const maxTotalMessage = faker.number.int({ min: 1, max: 10 });
-      await sqsProducer.enqueueMessageBatch({
-        queueName,
-        payload: Array.from({ length: maxTotalMessage }, () => "Hello, world!"),
-        messageDeduplicationId: uuid(),
-        messageGroupId: uuid(),
+        MaxNumberOfMessages: 10,
       });
 
-      const receiveResult = await sqsProvider.receiveMessage({
-        QueueUrl,
-      });
-      expect(receiveResult.Messages).toHaveLength(1);
+      expect(receiveResult.Messages).toHaveLength(3);
     });
   });
 });

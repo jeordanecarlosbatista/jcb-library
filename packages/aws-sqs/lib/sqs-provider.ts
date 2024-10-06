@@ -1,8 +1,6 @@
 import {
   CreateQueueCommand,
   CreateQueueCommandInput,
-  DeleteMessageCommand,
-  DeleteMessageCommandInput,
   ReceiveMessageCommand,
   ReceiveMessageCommandInput,
   SendMessageBatchCommand,
@@ -46,11 +44,11 @@ export class SQSProvider {
     return this.client.send(new ReceiveMessageCommand(command));
   }
 
-  async deleteMessage(command: DeleteMessageCommandInput) {
-    return this.client.send(new DeleteMessageCommand(command));
-  }
+  // async deleteMessage(command: DeleteMessageCommandInput) {
+  //   return this.client.send(new DeleteMessageCommand(command));
+  // }
 
-  destroy() {
-    this.client.destroy();
-  }
+  // destroy() {
+  //   this.client.destroy();
+  // }
 }
