@@ -46,7 +46,7 @@
       "json"
     ],
     "setupFiles": [
-      "<rootDir>/test/setup-env.js"
+      "<rootDir>/test/setup-env.mjs"
     ],
     "rootDir": ".",
     "testRegex": ".*\\.spec\\.ts$",
