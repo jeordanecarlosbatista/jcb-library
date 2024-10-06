@@ -3,7 +3,7 @@
 import { MessageBatchPayload, MessageEnqueuer } from "@/producer";
 import { SQSProducerClient } from "@/sqs-producer";
 import { QueueListener, QueueResolveWithInput } from "@/queue-listener";
-import { Enqueuer } from "@/enqueuer";
+import { EnqueuerProvider } from "@/enqueuer";
 
 export {
   SQSProducerClient,
@@ -11,5 +11,5 @@ export {
   MessageEnqueuer,
   QueueListener,
   QueueResolveWithInput,
-  Enqueuer,
+  EnqueuerProvider,
 };

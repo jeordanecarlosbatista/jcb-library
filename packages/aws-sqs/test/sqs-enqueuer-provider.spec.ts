@@ -1,20 +1,11 @@
-import {
-  EnqueuerProvider,
-  SQSEnqueuerProvider,
-  EnqueueParams,
-} from "@/enqueuer";
+import { EnqueueParams, SQSEnqueuerProvider } from "@/enqueuer";
 import SQSProducerClientSingleton from "@/sqs-producer-client-singleton";
 
 jest.mock("@/sqs-producer-client-singleton");
 
-describe("EnqueuerProvider", () => {
+describe("SQSEnqueuerProvider", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  it("should return an instance of SQSEnqueuerProvider", () => {
-    const enqueuer = EnqueuerProvider.factory();
-    expect(enqueuer).toBeInstanceOf(SQSEnqueuerProvider);
   });
 
   it("should call enqueue on the producer client", async () => {
@@ -23,13 +14,13 @@ describe("EnqueuerProvider", () => {
       enqueue: mockEnqueue,
     });
 
-    const enqueuer = EnqueuerProvider.factory();
+    const enqueuerProvider = new SQSEnqueuerProvider();
     const params: EnqueueParams = {
       queueName: "testQueue",
       payload: { key: "value" },
     };
 
-    await enqueuer.enqueue(params);
+    await enqueuerProvider.enqueue(params);
 
     expect(mockEnqueue).toHaveBeenCalledWith({
       queueName: "testQueue",
