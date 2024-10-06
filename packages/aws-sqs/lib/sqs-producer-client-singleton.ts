@@ -6,23 +6,28 @@ import { ConsoleLogger } from "@jeordanecarlosbatista/jcb-logger";
 class SQSProducerClientSingleton {
   private static instance: SQSProducerClient;
 
-  private constructor() {}
-
   public static getInstance(): SQSProducerClient {
     if (!SQSProducerClientSingleton.instance) {
-      const sqsProvider = new SQSProvider(
-        new SQSClient({
-          endpoint: process.env.AWS_SQS_ENDPOINT,
-          region: process.env.AWS_REGION,
-        })
-      );
-      const logger = new ConsoleLogger();
+      const sqsProvider = this.createSQSProvider();
+      const logger = this.createLogger();
       SQSProducerClientSingleton.instance = new SQSProducerClient(
         sqsProvider,
         logger
       );
     }
     return SQSProducerClientSingleton.instance;
+  }
+
+  private static createSQSProvider(): SQSProvider {
+    const sqsClient = new SQSClient({
+      endpoint: process.env.AWS_SQS_ENDPOINT,
+      region: process.env.AWS_REGION,
+    });
+    return new SQSProvider(sqsClient);
+  }
+
+  private static createLogger(): ConsoleLogger {
+    return new ConsoleLogger();
   }
 }
 
