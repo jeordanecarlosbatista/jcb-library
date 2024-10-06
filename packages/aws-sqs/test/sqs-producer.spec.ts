@@ -6,12 +6,7 @@ import { ConsoleLogger } from "@jeordanecarlosbatista/jcb-logger";
 import { faker } from "@faker-js/faker/.";
 import { SQSClient } from "@aws-sdk/client-sqs";
 
-type TestSetup = {
-  sqsProducer: SQSProducerClient;
-  sqsProvider: SQSProvider;
-};
-
-const makeTestSetup = (): TestSetup => {
+const makeTestSetup = () => {
   const sqsCLient = new SQSClient({ endpoint: process.env.AWS_SQS_ENDPOINT });
 
   const sqsProvider = new SQSProvider(sqsCLient);
