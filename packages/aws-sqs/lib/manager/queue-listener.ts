@@ -1,4 +1,3 @@
-import { EventEmitter } from "events";
 import { SQSProvider } from "../sqs-provider";
 import { QueueListener } from "../queue-listener";
 
@@ -7,7 +6,7 @@ interface Listener {
   stop(): void;
 }
 
-class SQSListener extends EventEmitter implements Listener {
+class SQSListener implements Listener {
   private isListening: boolean = false;
   private intervalId: NodeJS.Timeout | null = null;
 
@@ -16,9 +15,7 @@ class SQSListener extends EventEmitter implements Listener {
     private readonly queueName: string,
     private readonly listenerInstance: QueueListener,
     private readonly pollingInterval: number = 1000
-  ) {
-    super();
-  }
+  ) {}
 
   private get queueUrl() {
     return `${process.env.SQS_QUEUE_BASE_URL}/${this.queueName}`;
@@ -47,30 +44,24 @@ class SQSListener extends EventEmitter implements Listener {
       // istanbul ignore next
       if (!this.isListening) return;
 
-      try {
-        const messages = await this.sqsProvider.receiveMessage({
-          QueueUrl: this.queueUrl,
-          MaxNumberOfMessages: 1,
-          WaitTimeSeconds: 20,
-        });
+      const messages = await this.sqsProvider.receiveMessage({
+        QueueUrl: this.queueUrl,
+        MaxNumberOfMessages: 1,
+        WaitTimeSeconds: 20,
+      });
 
-        if (messages.Messages) {
-          for (const message of messages.Messages) {
-            this.emit("message", message);
-            try {
-              await this.listenerInstance.handleMessage(message);
-              await this.sqsProvider.deleteMessage({
-                QueueUrl: this.queueUrl,
-                ReceiptHandle: message.ReceiptHandle!,
-              });
-            } catch (error) {
-              console.error(error);
-            }
+      if (messages.Messages) {
+        for (const message of messages.Messages) {
+          try {
+            await this.listenerInstance.handleMessage(message);
+            await this.sqsProvider.deleteMessage({
+              QueueUrl: this.queueUrl,
+              ReceiptHandle: message.ReceiptHandle!,
+            });
+          } catch (error) {
+            console.error(error);
           }
         }
-      } catch (error) {
-        /* istanbul ignore next */
-        this.emit("error", error);
       }
     }, this.pollingInterval);
   }
