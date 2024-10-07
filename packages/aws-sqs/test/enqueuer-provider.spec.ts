@@ -1,4 +1,4 @@
-import { Enqueuer, EnqueuerProvider, SQSEnqueuerProvider } from "@/enqueuer";
+import { Enqueuer, EnqueuerProvider, SQSEnqueuerProvider } from "@lib/enqueuer";
 
 describe("EnqueuerProvider", () => {
   it("should return an instance of SQSEnqueuerProvider", () => {

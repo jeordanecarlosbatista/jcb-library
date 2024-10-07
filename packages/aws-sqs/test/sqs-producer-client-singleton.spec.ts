@@ -1,11 +1,11 @@
-import { SQSProducerClient } from "@/sqs-producer";
-import { SQSProvider } from "@/sqs-provider";
+import { SqsProducer } from "@lib/sqs-producer";
+import { SQSProvider } from "@lib/sqs-provider";
 import { SQSClient } from "@aws-sdk/client-sqs";
 import { ConsoleLogger } from "@jeordanecarlosbatista/jcb-logger";
-import SQSProducerClientSingleton from "@/sqs-producer-client-singleton";
+import { SQSProducerClientSingleton } from "@lib/sqs-producer-client-singleton";
 
 jest.mock("@aws-sdk/client-sqs");
-jest.mock("@/sqs-provider");
+jest.mock("@lib/sqs-provider");
 jest.mock("@jeordanecarlosbatista/jcb-logger");
 
 describe("SQSProducerClientSingleton", () => {
@@ -40,6 +40,6 @@ describe("SQSProducerClientSingleton", () => {
     });
     expect(SQSProvider).toHaveBeenCalledWith(mockSQSClient);
     expect(ConsoleLogger).toHaveBeenCalled();
-    expect(instance).toBeInstanceOf(SQSProducerClient);
+    expect(instance).toBeInstanceOf(SqsProducer);
   });
 });

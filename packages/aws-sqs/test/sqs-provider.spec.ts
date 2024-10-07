@@ -4,7 +4,7 @@ import { faker } from "@faker-js/faker";
 import { config } from "dotenv";
 config({ path: path.join(__dirname, ".env") });
 
-import { SQSProvider } from "@/sqs-provider";
+import { SQSProvider } from "@lib/sqs-provider";
 import { SQSClient } from "@aws-sdk/client-sqs";
 
 type TestSetup = {

@@ -1,16 +1,16 @@
-import { SQSProducerClient } from "@/sqs-producer";
-import { SQSProvider } from "@/sqs-provider";
 import { SQSClient } from "@aws-sdk/client-sqs";
 import { ConsoleLogger } from "@jeordanecarlosbatista/jcb-logger";
+import { SQSProvider } from "@lib/sqs-provider";
+import { SqsProducer } from "@lib/sqs-producer";
 
 class SQSProducerClientSingleton {
-  private static instance: SQSProducerClient;
+  private static instance: SqsProducer;
 
-  public static getInstance(): SQSProducerClient {
+  public static getInstance(): SqsProducer {
     if (!SQSProducerClientSingleton.instance) {
       const sqsProvider = this.createSQSProvider();
       const logger = this.createLogger();
-      SQSProducerClientSingleton.instance = new SQSProducerClient(
+      SQSProducerClientSingleton.instance = new SqsProducer(
         sqsProvider,
         logger
       );
@@ -31,4 +31,4 @@ class SQSProducerClientSingleton {
   }
 }
 
-export default SQSProducerClientSingleton;
+export { SQSProducerClientSingleton };

@@ -3,7 +3,7 @@
 import { Message } from "@aws-sdk/client-sqs";
 import { z } from "zod";
 
-export interface QueueResolveWithInput<
+interface QueueResolveWithInput<
   TSchema extends z.ZodType<any, any> = z.ZodType<any, any>
 > {
   message: Message;
@@ -14,7 +14,7 @@ export interface QueueResolveWithInput<
   ) => Promise<void>;
 }
 
-export abstract class QueueListener {
+abstract class QueueListener {
   abstract handleMessage(message: Message): Promise<void>;
 
   async resolveWith<TSchema extends z.ZodType<any, any>>(
@@ -39,3 +39,5 @@ export abstract class QueueListener {
     return await resolveCallback(result.data);
   }
 }
+
+export { QueueListener, QueueResolveWithInput };

@@ -1,4 +1,4 @@
-import { QueueListener } from "@/queue-listener";
+import { QueueListener } from "@lib/queue-listener";
 import { Message } from "@aws-sdk/client-sqs";
 import { z } from "zod";
 
@@ -9,7 +9,7 @@ class TestQueueListener extends QueueListener {
   }
 }
 
-describe("QueueListener", () => {
+describe(QueueListener.name, () => {
   let queueListener: TestQueueListener;
 
   beforeEach(() => {

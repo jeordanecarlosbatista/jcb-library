@@ -1,17 +1,17 @@
-import SQSProducerClientSingleton from "./sqs-producer-client-singleton";
+import { SQSProducerClientSingleton } from "@lib/sqs-producer-client-singleton";
 
-export interface EnqueueParams {
+interface EnqueueParams {
   queueName: string;
   payload: string | object;
   messageDeduplicationId?: string;
   messageGroupId?: string;
 }
 
-export interface Enqueuer {
+interface Enqueuer {
   enqueue(params: EnqueueParams): Promise<void>;
 }
 
-export class SQSEnqueuerProvider implements Enqueuer {
+class SQSEnqueuerProvider implements Enqueuer {
   private readonly producerClient = SQSProducerClientSingleton.getInstance();
 
   async enqueue(params: EnqueueParams): Promise<void> {
@@ -24,8 +24,10 @@ export class SQSEnqueuerProvider implements Enqueuer {
   }
 }
 
-export class EnqueuerProvider {
+class EnqueuerProvider {
   static factory(): Enqueuer {
     return new SQSEnqueuerProvider();
   }
 }
+
+export { EnqueueParams, Enqueuer, SQSEnqueuerProvider, EnqueuerProvider };
