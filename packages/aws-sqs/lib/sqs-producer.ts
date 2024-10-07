@@ -1,12 +1,10 @@
-import { SQSProvider } from "@/sqs-provider";
-import {
-  EnqueueMessageBatchParams,
-  EnqueueMessageParams,
-  MessageEnqueuer,
-} from "@/producer";
+import { MessageEnqueuer } from "@lib/producer";
+import { SQSProvider } from "@lib/sqs-provider";
 import { Logger } from "@jeordanecarlosbatista/jcb-logger";
+import { EnqueueMessageParams } from "@lib/producer";
+import { EnqueueMessageBatchParams } from "@lib/producer";
 
-export class SQSProducerClient implements MessageEnqueuer {
+class SqsProducer implements MessageEnqueuer {
   constructor(
     private readonly provider: SQSProvider,
     private readonly logger: Logger
@@ -91,3 +89,5 @@ export class SQSProducerClient implements MessageEnqueuer {
     });
   }
 }
+
+export { SqsProducer };

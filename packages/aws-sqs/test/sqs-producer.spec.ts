@@ -1,10 +1,9 @@
 import { v4 as uuid } from "uuid";
-
-import { SQSProvider } from "@/sqs-provider";
-import { SQSProducerClient } from "@/sqs-producer";
 import { ConsoleLogger } from "@jeordanecarlosbatista/jcb-logger";
 import { faker } from "@faker-js/faker/.";
 import { SQSClient } from "@aws-sdk/client-sqs";
+import { SqsProducer } from "@lib/sqs-producer";
+import { SQSProvider } from "@lib/sqs-provider";
 
 const makeTestSetup = () => {
   const sqsCLient = new SQSClient({ endpoint: process.env.AWS_SQS_ENDPOINT });
@@ -12,12 +11,12 @@ const makeTestSetup = () => {
   const sqsProvider = new SQSProvider(sqsCLient);
   const logger = new ConsoleLogger();
 
-  const sqsProducer = new SQSProducerClient(sqsProvider, logger);
+  const sqsProducer = new SqsProducer(sqsProvider, logger);
 
   return { sqsProducer, sqsProvider };
 };
 
-describe(SQSProducerClient.name, () => {
+describe(SqsProducer.name, () => {
   describe("enqueueMessage", () => {
     it("should enqueue message in fifo queue", async () => {
       const { sqsProducer, sqsProvider } = makeTestSetup();

@@ -1,7 +1,7 @@
-import { EnqueueParams, SQSEnqueuerProvider } from "@/enqueuer";
-import SQSProducerClientSingleton from "@/sqs-producer-client-singleton";
+import { EnqueueParams, SQSEnqueuerProvider } from "@lib/enqueuer";
+import { SQSProducerClientSingleton } from "@lib/sqs-producer-client-singleton";
 
-jest.mock("@/sqs-producer-client-singleton");
+jest.mock("@lib/sqs-producer-client-singleton");
 
 describe("SQSEnqueuerProvider", () => {
   beforeEach(() => {

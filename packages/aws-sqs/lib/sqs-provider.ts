@@ -1,6 +1,9 @@
 import {
   CreateQueueCommand,
   CreateQueueCommandInput,
+  DeleteMessageCommand,
+  DeleteMessageCommandInput,
+  GetQueueAttributesCommand,
   ReceiveMessageCommand,
   ReceiveMessageCommandInput,
   SendMessageBatchCommand,
@@ -10,7 +13,7 @@ import {
   SQSClient,
 } from "@aws-sdk/client-sqs";
 
-export class SQSProvider {
+class SQSProvider {
   constructor(private readonly client: SQSClient) {}
 
   async createQueue(
@@ -40,11 +43,22 @@ export class SQSProvider {
     return this.client.send(new ReceiveMessageCommand(command));
   }
 
-  // async deleteMessage(command: DeleteMessageCommandInput) {
-  //   return this.client.send(new DeleteMessageCommand(command));
-  // }
+  async deleteMessage(command: DeleteMessageCommandInput) {
+    return this.client.send(new DeleteMessageCommand(command));
+  }
+
+  async getQueueAttributes(queueUrl: string) {
+    return this.client.send(
+      new GetQueueAttributesCommand({
+        QueueUrl: queueUrl,
+        AttributeNames: ["All"],
+      })
+    );
+  }
 
   // destroy() {
   //   this.client.destroy();
   // }
 }
+
+export { SQSProvider };
