@@ -1,6 +1,6 @@
 {
   "name": "@jeordanecarlosbatista/jcb-aws-sqs",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "AWS SQS",
   "main": "index.js",
   "types": "./dist/index.d.ts",
