@@ -10,12 +10,15 @@ interface ListenerManager {
 }
 
 type QueueListenerManagedArguments = {
+  pollingInterval: number;
+  receiveMaxNumberOfMessages: number;
+  waitTimeSeconds: number;
   queues: { queueName: string; listener: QueueListener }[];
 };
 
 class QueueListenerManaged implements ListenerManager {
   sqsProvider: SQSProvider;
-  private listeners: Map<string, SQSListener> = new Map();
+  private readonly listeners: Map<string, SQSListener> = new Map();
 
   constructor(args: QueueListenerManagedArguments) {
     const sqsClient = new SQSClient({
@@ -27,7 +30,14 @@ class QueueListenerManaged implements ListenerManager {
     args.queues.forEach(({ queueName, listener }) => {
       this.addListener(
         `${process.env.SQS_QUEUE_BASE_URL}/${queueName}`,
-        new SQSListener(this.sqsProvider, queueName, listener)
+        new SQSListener({
+          sqsProvider: this.sqsProvider,
+          queueName,
+          listenerInstance: listener,
+          pollingInterval: args.pollingInterval,
+          receiveMaxNumberOfMessages: args.receiveMaxNumberOfMessages,
+          waitTimeSeconds: args.waitTimeSeconds,
+        })
       );
     });
   }
