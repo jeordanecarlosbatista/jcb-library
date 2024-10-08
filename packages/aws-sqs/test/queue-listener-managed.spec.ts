@@ -41,6 +41,9 @@ describe(QueueListenerManaged.name, () => {
     assert(QueueUrl);
 
     const queueListenerManaged = new QueueListenerManaged({
+      pollingInterval: 300,
+      receiveMaxNumberOfMessages: 1,
+      waitTimeSeconds: 300,
       queues: [
         {
           queueName,
@@ -85,6 +88,9 @@ describe(QueueListenerManaged.name, () => {
     assert(QueueUrl);
 
     const queueListenerManaged = new QueueListenerManaged({
+      pollingInterval: 300,
+      receiveMaxNumberOfMessages: 1,
+      waitTimeSeconds: 300,
       queues: [
         {
           queueName,

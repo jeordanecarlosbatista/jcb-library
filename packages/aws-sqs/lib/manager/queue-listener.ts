@@ -6,16 +6,33 @@ interface Listener {
   stop(): void;
 }
 
+interface QueueListenerParams {
+  sqsProvider: SQSProvider;
+  queueName: string;
+  listenerInstance: QueueListener;
+  pollingInterval: number;
+  receiveMaxNumberOfMessages: number;
+  waitTimeSeconds: number;
+}
+
 class SQSListener implements Listener {
   private isListening: boolean = false;
   private intervalId: NodeJS.Timeout | null = null;
+  private readonly pollingInterval: number;
+  private readonly queueName: string;
+  private readonly listenerInstance: QueueListener;
+  private readonly sqsProvider: SQSProvider;
+  private readonly maxNumberOfMessages: number;
+  private readonly waitTimeSeconds: number;
 
-  constructor(
-    private readonly sqsProvider: SQSProvider,
-    private readonly queueName: string,
-    private readonly listenerInstance: QueueListener,
-    private readonly pollingInterval: number = 1000
-  ) {}
+  constructor(args: QueueListenerParams) {
+    this.sqsProvider = args.sqsProvider;
+    this.queueName = args.queueName;
+    this.listenerInstance = args.listenerInstance;
+    this.pollingInterval = args.pollingInterval;
+    this.maxNumberOfMessages = args.receiveMaxNumberOfMessages;
+    this.waitTimeSeconds = args.waitTimeSeconds;
+  }
 
   private get queueUrl() {
     return `${process.env.SQS_QUEUE_BASE_URL}/${this.queueName}`;
@@ -46,8 +63,8 @@ class SQSListener implements Listener {
 
       const messages = await this.sqsProvider.receiveMessage({
         QueueUrl: this.queueUrl,
-        MaxNumberOfMessages: 1,
-        WaitTimeSeconds: 20,
+        MaxNumberOfMessages: this.maxNumberOfMessages,
+        WaitTimeSeconds: this.waitTimeSeconds,
       });
 
       if (messages.Messages) {
