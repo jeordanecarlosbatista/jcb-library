@@ -3,7 +3,7 @@ import { SQSProvider } from "@lib/sqs-provider";
 import { SQSListener } from "@lib/manager/queue-listener";
 import { QueueListener } from "@lib/queue-listener";
 
-interface ListenerManager {
+export interface ListenerManager {
   addListener(queueUrl: string, listener: SQSListener): void;
   start(): void;
   stop(): void;
