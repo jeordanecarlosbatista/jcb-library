@@ -16,9 +16,13 @@ class TestSetupManager implements TestSetup {
     this.queues = args.queues;
   }
 
-  run(callback: () => Promise<void>): Promise<void> {
-    this.queues.start();
-    return callback();
+  async run(callback: () => Promise<void>): Promise<void> {
+    try {
+      this.queues.start();
+      await callback();
+    } finally {
+      this.tearDown();
+    }
   }
 
   tearDown(): Promise<void> {
