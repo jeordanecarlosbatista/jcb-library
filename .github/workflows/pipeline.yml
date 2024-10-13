@@ -42,7 +42,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install awslocal
-        run: pip install awscli-local
+        run: pip3 install awscli-local
 
       - name: Setup LocalStack
         run: ./scripts/localstack.sh
