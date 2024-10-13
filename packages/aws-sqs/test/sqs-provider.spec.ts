@@ -1,8 +1,5 @@
-import path from "path";
+import assert from "node:assert";
 import { faker } from "@faker-js/faker";
-
-import { config } from "dotenv";
-config({ path: path.join(__dirname, ".env") });
 
 import { SQSProvider } from "@lib/sqs-provider";
 import { SQSClient } from "@aws-sdk/client-sqs";
@@ -85,6 +82,28 @@ describe(SQSProvider.name, () => {
         MaxNumberOfMessages: maxTotalMessage,
       });
       expect(receiveResult.Messages).toHaveLength(maxTotalMessage);
+    });
+  });
+
+  describe("purgeQueue", () => {
+    it("should purge the SQS queue", async () => {
+      const { sqsProvider } = makeTestSetup();
+
+      const { QueueUrl } = await sqsProvider.createQueue(
+        faker.string.alphanumeric(10)
+      );
+
+      assert(QueueUrl, "QueueUrl is required");
+
+      await sqsProvider.sendMessage({
+        QueueUrl,
+        MessageBody: "Hello, world!",
+      });
+
+      await sqsProvider.purgeQueue(QueueUrl);
+
+      const attributes = await sqsProvider.getQueueAttributes(QueueUrl);
+      expect(attributes.Attributes?.ApproximateNumberOfMessages).toBe("0");
     });
   });
 });

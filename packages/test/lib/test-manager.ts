@@ -1,4 +1,5 @@
 import { ListenerManager } from "@jeordanecarlosbatista/jcb-aws-sqs";
+import { SQSProvider } from "@jeordanecarlosbatista/jcb-aws-sqs/dist/sqs-provider";
 
 interface TestSetup {
   run(callback: () => Promise<void>): Promise<void>;
@@ -6,19 +7,24 @@ interface TestSetup {
 }
 
 type TestSetupArguments = {
-  queues: ListenerManager;
+  listenerManager: ListenerManager;
+  sqsProvider: SQSProvider;
 };
 
 class TestSetupManager implements TestSetup {
-  private readonly queues: ListenerManager;
+  private readonly listenerManager: ListenerManager;
+  private readonly sqsProvider: SQSProvider;
 
   constructor(args: TestSetupArguments) {
-    this.queues = args.queues;
+    this.listenerManager = args.listenerManager;
+    this.sqsProvider = args.sqsProvider;
   }
 
   async run(callback: () => Promise<void>): Promise<void> {
     try {
-      this.queues.start();
+      await this.purgeQueues();
+
+      this.listenerManager.start();
       await callback();
     } finally {
       this.tearDown();
@@ -26,8 +32,14 @@ class TestSetupManager implements TestSetup {
   }
 
   tearDown(): Promise<void> {
-    this.queues.stop();
+    this.listenerManager.stop();
     return Promise.resolve();
+  }
+
+  private async purgeQueues() {
+    for (const queueUrl of this.listenerManager.getAllQueueUrls()) {
+      await this.sqsProvider.purgeQueue(queueUrl);
+    }
   }
 }
 

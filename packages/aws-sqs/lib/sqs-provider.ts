@@ -4,6 +4,7 @@ import {
   DeleteMessageCommand,
   DeleteMessageCommandInput,
   GetQueueAttributesCommand,
+  PurgeQueueCommand,
   ReceiveMessageCommand,
   ReceiveMessageCommandInput,
   SendMessageBatchCommand,
@@ -45,6 +46,14 @@ class SQSProvider {
 
   async deleteMessage(command: DeleteMessageCommandInput) {
     return this.client.send(new DeleteMessageCommand(command));
+  }
+
+  async purgeQueue(queueUrl: string) {
+    return this.client.send(
+      new PurgeQueueCommand({
+        QueueUrl: queueUrl,
+      })
+    );
   }
 
   async getQueueAttributes(queueUrl: string) {

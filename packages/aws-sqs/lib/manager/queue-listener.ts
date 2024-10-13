@@ -2,6 +2,7 @@ import { SQSProvider } from "../sqs-provider";
 import { QueueListener } from "../queue-listener";
 
 interface Listener {
+  queueUrl: string;
   start(): void;
   stop(): void;
 }
@@ -34,7 +35,7 @@ class SQSListener implements Listener {
     this.waitTimeSeconds = args.waitTimeSeconds;
   }
 
-  private get queueUrl() {
+  get queueUrl() {
     return `${process.env.SQS_QUEUE_BASE_URL}/${this.queueName}`;
   }
 
