@@ -41,8 +41,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install pipx
+        run: sudo apt-get install -y pipx
+
       - name: Install awslocal
-        run: pip3 install awscli-local
+        run: pipx install awscli-local
 
       - name: Setup LocalStack
         run: ./scripts/localstack.sh
