@@ -125,4 +125,29 @@ describe(QueueListenerManaged.name, () => {
 
     queueListenerManaged.stop();
   });
+
+  it("should return all queue urls", async () => {
+    const { sqsProvider, listener } = makeTestSetup();
+
+    const queueName = faker.string.alphanumeric(10);
+    const { QueueUrl } = await sqsProvider.createQueue(queueName);
+    assert(QueueUrl);
+
+    const queueListenerManaged = new QueueListenerManaged({
+      pollingInterval: 300,
+      receiveMaxNumberOfMessages: 1,
+      waitTimeSeconds: 300,
+      queues: [
+        {
+          queueName,
+          listener,
+        },
+      ],
+    });
+
+    const queueUrls = queueListenerManaged.getAllQueueUrls();
+    expect(queueUrls).toEqual([
+      `${process.env.SQS_QUEUE_BASE_URL}/${queueName}`,
+    ]);
+  });
 });
