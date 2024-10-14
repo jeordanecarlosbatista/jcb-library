@@ -1,5 +1,4 @@
 import { ListenerManager } from "@jeordanecarlosbatista/jcb-aws-sqs";
-import { SQSProvider } from "@jeordanecarlosbatista/jcb-aws-sqs/dist/sqs-provider";
 import { TestSetupManager } from "@lib/test-manager";
 
 describe(TestSetupManager.name, () => {
@@ -9,10 +8,8 @@ describe(TestSetupManager.name, () => {
       stop: jest.fn(),
       getAllQueueUrls: jest.fn(),
     } as unknown as ListenerManager;
-    const mockSqsProvider = {} as unknown as SQSProvider;
     const testSetupManager = new TestSetupManager({
       listenerManager: listenerManager,
-      sqsProvider: mockSqsProvider,
     });
     expect(testSetupManager).toBeDefined();
   });
@@ -23,10 +20,8 @@ describe(TestSetupManager.name, () => {
       stop: jest.fn(),
       getAllQueueUrls: jest.fn().mockImplementation(() => []),
     } as unknown as ListenerManager;
-    const mockSqsProvider = {} as unknown as SQSProvider;
     const testSetupManager = new TestSetupManager({
       listenerManager,
-      sqsProvider: mockSqsProvider,
     });
     const callback = jest.fn().mockResolvedValue(undefined);
 
@@ -43,7 +38,6 @@ describe(TestSetupManager.name, () => {
     } as unknown as ListenerManager;
     const testSetupManager = new TestSetupManager({
       listenerManager,
-      sqsProvider: {} as unknown as SQSProvider,
     });
 
     await testSetupManager.tearDown();
@@ -55,20 +49,12 @@ describe(TestSetupManager.name, () => {
     const listenerManager = {
       start: jest.fn(),
       stop: jest.fn(),
-      getAllQueueUrls: jest.fn().mockImplementation(() => ["url1", "url2"]),
+      getAllQueueUrls: jest.fn().mockImplementation(() => []),
     } as unknown as ListenerManager;
-    const sqsProvider = {
-      purgeQueue: jest.fn(),
-    } as unknown as SQSProvider;
     const testSetupManager = new TestSetupManager({
       listenerManager,
-      sqsProvider,
     });
 
     await testSetupManager.run(jest.fn().mockResolvedValue(undefined));
-
-    expect(sqsProvider.purgeQueue).toHaveBeenCalledTimes(2);
-    expect(sqsProvider.purgeQueue).toHaveBeenCalledWith("url1");
-    expect(sqsProvider.purgeQueue).toHaveBeenCalledWith("url2");
   });
 });

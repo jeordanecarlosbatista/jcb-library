@@ -1,5 +1,5 @@
 import { ListenerManager } from "@jeordanecarlosbatista/jcb-aws-sqs";
-import { SQSProvider } from "@jeordanecarlosbatista/jcb-aws-sqs/dist/sqs-provider";
+import { SQSProvider } from "@jeordanecarlosbatista/jcb-aws-sqs";
 
 interface TestSetup {
   run(callback: () => Promise<void>): Promise<void>;
@@ -8,7 +8,6 @@ interface TestSetup {
 
 type TestSetupArguments = {
   listenerManager: ListenerManager;
-  sqsProvider: SQSProvider;
 };
 
 class TestSetupManager implements TestSetup {
@@ -17,7 +16,7 @@ class TestSetupManager implements TestSetup {
 
   constructor(args: TestSetupArguments) {
     this.listenerManager = args.listenerManager;
-    this.sqsProvider = args.sqsProvider;
+    this.sqsProvider = SQSProvider.factory();
   }
 
   async run(callback: () => Promise<void>): Promise<void> {
@@ -38,6 +37,7 @@ class TestSetupManager implements TestSetup {
 
   private async purgeQueues() {
     for (const queueUrl of this.listenerManager.getAllQueueUrls()) {
+      // istanbul ignore next
       await this.sqsProvider.purgeQueue(queueUrl);
     }
   }
