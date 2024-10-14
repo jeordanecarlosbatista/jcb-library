@@ -1,5 +1,4 @@
 import { SqsProducer } from "@lib/sqs-producer";
-import { SQSProvider } from "@lib/sqs-provider";
 import { SQSClient } from "@aws-sdk/client-sqs";
 import { ConsoleLogger } from "@jeordanecarlosbatista/jcb-logger";
 import { SQSProducerClientSingleton } from "@lib/sqs-producer-client-singleton";
@@ -25,11 +24,9 @@ describe("SQSProducerClientSingleton", () => {
       endpoint: process.env.AWS_SQS_ENDPOINT,
       region: process.env.AWS_REGION,
     });
-    const mockSQSProvider = new SQSProvider(mockSQSClient);
     const mockLogger = new ConsoleLogger();
 
     (SQSClient as jest.Mock).mockImplementation(() => mockSQSClient);
-    (SQSProvider as jest.Mock).mockImplementation(() => mockSQSProvider);
     (ConsoleLogger as jest.Mock).mockImplementation(() => mockLogger);
 
     const instance = SQSProducerClientSingleton.getInstance();
@@ -38,7 +35,6 @@ describe("SQSProducerClientSingleton", () => {
       endpoint: process.env.AWS_SQS_ENDPOINT,
       region: process.env.AWS_REGION,
     });
-    expect(SQSProvider).toHaveBeenCalledWith(mockSQSClient);
     expect(ConsoleLogger).toHaveBeenCalled();
     expect(instance).toBeInstanceOf(SqsProducer);
   });
