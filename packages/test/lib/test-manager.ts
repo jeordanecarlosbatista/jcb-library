@@ -17,7 +17,7 @@ class TestSetupManager implements TestSetup {
 
   constructor(args: TestSetupArguments) {
     this.listenerManager = args.listenerManager;
-    this.sqsProvider = args.sqsProvider;
+    this.sqsProvider = SQSProvider.factory();
   }
 
   async run(callback: () => Promise<void>): Promise<void> {
