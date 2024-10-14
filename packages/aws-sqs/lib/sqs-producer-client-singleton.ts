@@ -1,4 +1,3 @@
-import { SQSClient } from "@aws-sdk/client-sqs";
 import { ConsoleLogger } from "@jeordanecarlosbatista/jcb-logger";
 import { SQSProvider } from "@lib/sqs-provider";
 import { SqsProducer } from "@lib/sqs-producer";
@@ -19,11 +18,7 @@ class SQSProducerClientSingleton {
   }
 
   private static createSQSProvider(): SQSProvider {
-    const sqsClient = new SQSClient({
-      endpoint: process.env.AWS_SQS_ENDPOINT,
-      region: process.env.AWS_REGION,
-    });
-    return new SQSProvider(sqsClient);
+    return SQSProvider.factory();
   }
 
   private static createLogger(): ConsoleLogger {

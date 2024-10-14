@@ -1,9 +1,8 @@
-import { SQSClient } from "@aws-sdk/client-sqs";
 import { SQSProvider } from "@lib/sqs-provider";
 import { SQSListener } from "@lib/manager/queue-listener";
 import { QueueListener } from "@lib/queue-listener";
 
-export interface ListenerManager {
+interface ListenerManager {
   start(): void;
   stop(): void;
   getAllQueueUrls(): string[];
@@ -26,11 +25,7 @@ class QueueListenerManaged implements ListenerManager {
   private readonly listeners: Map<string, SQSListener> = new Map();
 
   constructor(private readonly args: ListenerManagedArguments) {
-    const sqsClient = new SQSClient({
-      region: process.env.AWS_REGION,
-      endpoint: process.env.AWS_SQS_ENDPOINT,
-    });
-    this.sqsProvider = new SQSProvider(sqsClient);
+    this.sqsProvider = SQSProvider.factory();
     this.queues = args.queues;
 
     this.addAllListener();
@@ -71,4 +66,4 @@ class QueueListenerManaged implements ListenerManager {
   }
 }
 
-export { QueueListenerManaged, ListenerManager as ISQSListenerManager };
+export { QueueListenerManaged, ListenerManager };

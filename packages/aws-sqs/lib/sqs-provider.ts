@@ -68,6 +68,17 @@ class SQSProvider {
   // destroy() {
   //   this.client.destroy();
   // }
+
+  static getClient() {
+    return new SQSClient({
+      region: process.env.AWS_REGION,
+      endpoint: process.env.AWS_SQS_ENDPOINT,
+    });
+  }
+
+  static factory() {
+    return new SQSProvider(SQSProvider.getClient());
+  }
 }
 
-export { SQSProvider };
+export { SQSProvider, SQSClient };
