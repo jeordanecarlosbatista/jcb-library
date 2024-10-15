@@ -115,8 +115,9 @@ describe(QueueListener.name, () => {
         .spyOn(queueListener["producer"], "enqueue")
         .mockImplementation();
 
-      await queueListener.toMessageDLQ("queueName", {
-        message: "Hello, world!",
+      await queueListener.toMessageDLQ({
+        queueName: "queueName",
+        payload: { message: "Hello, world!" },
       });
 
       expect(enqueueSpy).toHaveBeenCalledWith({
