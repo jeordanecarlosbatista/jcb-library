@@ -2,6 +2,8 @@
 
 import { Message } from "@aws-sdk/client-sqs";
 import { z } from "zod";
+import { SQSProducerClientSingleton } from "./sqs-producer-client-singleton";
+import { SqsProducer } from "./sqs-producer";
 
 interface QueueResolveWithInput<
   TSchema extends z.ZodType<any, any> = z.ZodType<any, any>
@@ -15,6 +17,12 @@ interface QueueResolveWithInput<
 }
 
 abstract class QueueListener {
+  private readonly producer: SqsProducer;
+
+  constructor() {
+    this.producer = SQSProducerClientSingleton.getInstance();
+  }
+
   abstract handleMessage(message: Message): Promise<void>;
 
   async resolveWith<TSchema extends z.ZodType<any, any>>(
@@ -37,6 +45,13 @@ abstract class QueueListener {
     }
 
     return await resolveCallback(result.data);
+  }
+
+  async toMessageDLQ(queueName: string, data: object): Promise<void> {
+    return this.producer.enqueue({
+      payload: data,
+      queueName: queueName,
+    });
   }
 }
 

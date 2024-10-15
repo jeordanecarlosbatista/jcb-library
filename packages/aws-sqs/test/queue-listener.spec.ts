@@ -108,4 +108,21 @@ describe(QueueListener.name, () => {
 
     expect(resolveCallback).not.toHaveBeenCalled();
   });
+
+  describe("toMessageDLQ", () => {
+    it("should call producer.enqueue with the correct arguments", async () => {
+      const enqueueSpy = jest
+        .spyOn(queueListener["producer"], "enqueue")
+        .mockImplementation();
+
+      await queueListener.toMessageDLQ("queueName", {
+        message: "Hello, world!",
+      });
+
+      expect(enqueueSpy).toHaveBeenCalledWith({
+        payload: { message: "Hello, world!" },
+        queueName: "queueName",
+      });
+    });
+  });
 });
