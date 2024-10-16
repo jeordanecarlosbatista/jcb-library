@@ -8,7 +8,7 @@ import {
   ListenerManager,
   QueueListenerManaged,
 } from "@lib/manager/queue-listener-manager";
-import { SQSProvider } from "@lib/sqs-provider";
+import { ReceiveMessageParams, SQSProvider } from "@lib/sqs-provider";
 
 export {
   SqsProducer,
@@ -21,4 +21,5 @@ export {
   Enqueuer,
   ListenerManager,
   SQSProvider,
+  ReceiveMessageParams,
 };

@@ -1,60 +1,70 @@
-import { ListenerManager } from "@jeordanecarlosbatista/jcb-aws-sqs";
-import { TestSetupManager } from "@lib/test-manager";
+import { retry } from "async";
+import { randomUUID } from "node:crypto";
+import { Message } from "@aws-sdk/client-sqs";
+import {
+  QueueListener,
+  QueueListenerManaged,
+} from "@jeordanecarlosbatista/jcb-aws-sqs";
+import { TestSetupSQS } from "@lib/test-setup-queue";
+import { IntegrationTestManage } from "@lib/test-manager";
 
-describe(TestSetupManager.name, () => {
-  it("should be defined", () => {
-    const listenerManager = {
-      start: jest.fn(),
-      stop: jest.fn(),
-      getAllQueueUrls: jest.fn(),
-    } as unknown as ListenerManager;
-    const testSetupManager = new TestSetupManager({
-      listenerManager: listenerManager,
-    });
-    expect(testSetupManager).toBeDefined();
-  });
+class listenerManagerMock extends QueueListener {
+  async handleMessage(message: Message): Promise<void> {
+    await Promise.resolve(message);
+  }
+}
 
-  it("should call start on queues and execute callback in run method", async () => {
-    const listenerManager = {
-      start: jest.fn(),
-      stop: jest.fn(),
-      getAllQueueUrls: jest.fn().mockImplementation(() => []),
-    } as unknown as ListenerManager;
-    const testSetupManager = new TestSetupManager({
-      listenerManager,
-    });
-    const callback = jest.fn().mockResolvedValue(undefined);
+class TestSetup extends IntegrationTestManage {
+  private queueSetup: TestSetupSQS | undefined;
 
-    await testSetupManager.run(callback);
+  constructor() {
+    super();
+  }
 
-    expect(listenerManager.start).toHaveBeenCalled();
-    expect(callback).toHaveBeenCalled();
-  });
-
-  it("should call stop on queues in tearDown method", async () => {
-    const listenerManager = {
-      start: jest.fn(),
-      stop: jest.fn(),
-    } as unknown as ListenerManager;
-    const testSetupManager = new TestSetupManager({
-      listenerManager,
+  queue = () => {
+    this.queueSetup = new TestSetupSQS({
+      listenerManager: new QueueListenerManaged({
+        pollingInterval: 1000,
+        receiveMaxNumberOfMessages: 1,
+        waitTimeSeconds: 20,
+        queues: [
+          {
+            queueName: "hello-world.fifo",
+            listener: new listenerManagerMock(),
+          },
+        ],
+      }),
     });
 
-    await testSetupManager.tearDown();
+    return this.queueSetup;
+  };
 
-    expect(listenerManager.stop).toHaveBeenCalled();
-  });
+  override async run(callback: () => Promise<void>): Promise<void> {
+    await callback().finally(() => this.queueSetup?.tearDown());
+  }
+}
 
-  it("should call purgeQueue on all queues in tearDown method", async () => {
-    const listenerManager = {
-      start: jest.fn(),
-      stop: jest.fn(),
-      getAllQueueUrls: jest.fn().mockImplementation(() => []),
-    } as unknown as ListenerManager;
-    const testSetupManager = new TestSetupManager({
-      listenerManager,
+describe(IntegrationTestManage.name, () => {
+  jest.setTimeout(30000);
+
+  describe("run", () => {
+    it("should call the callback", async () => {
+      const testSetup = new TestSetup();
+      const queue = testSetup.queue();
+
+      await testSetup.run(async () => {
+        await queue.sendMessage({
+          payload: "Hello, World!",
+          queueName: "hello-world.fifo",
+          messageGroupId: randomUUID(),
+          messageDeduplicationId: randomUUID(),
+        });
+
+        await retry({ times: 50, interval: 300 }, async () => {
+          const messages = await queue.getAttributes("hello-world.fifo");
+          expect(messages.Attributes?.ApproximateNumberOfMessages).toBe("0");
+        });
+      });
     });
-
-    await testSetupManager.run(jest.fn().mockResolvedValue(undefined));
   });
 });

@@ -1,9 +1,6 @@
 /* istanbul ignore file */
 
-import {
-  TestSetupManager,
-  TestSetup,
-  TestSetupArguments,
-} from "@lib//test-manager";
+import { TestSetupSQS } from "@lib/test-setup-queue";
+import { IntegrationTestManage } from "@lib/test-manager";
 
-export { TestSetupManager, TestSetup, TestSetupArguments };
+export { IntegrationTestManage, TestSetupSQS };

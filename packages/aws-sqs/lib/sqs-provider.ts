@@ -14,6 +14,8 @@ import {
   SQSClient,
 } from "@aws-sdk/client-sqs";
 
+type ReceiveMessageParams = ReceiveMessageCommandInput;
+
 class SQSProvider {
   constructor(private readonly client: SQSClient) {}
 
@@ -40,7 +42,7 @@ class SQSProvider {
     return this.client.send(new SendMessageBatchCommand(args));
   }
 
-  async receiveMessage(command: ReceiveMessageCommandInput) {
+  async receiveMessage(command: ReceiveMessageParams) {
     return this.client.send(new ReceiveMessageCommand(command));
   }
 
@@ -65,10 +67,6 @@ class SQSProvider {
     );
   }
 
-  // destroy() {
-  //   this.client.destroy();
-  // }
-
   static getClient() {
     return new SQSClient({
       region: process.env.AWS_REGION,
@@ -81,4 +79,4 @@ class SQSProvider {
   }
 }
 
-export { SQSProvider, SQSClient };
+export { SQSProvider, SQSClient, ReceiveMessageParams };
