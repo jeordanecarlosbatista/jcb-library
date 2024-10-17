@@ -47,6 +47,9 @@ describe(QueueListenerManaged.name, () => {
       queues: [
         {
           queueName,
+          dql: {
+            queueName: `${queueName}-dql`,
+          },
           listener,
         },
       ],
@@ -94,6 +97,9 @@ describe(QueueListenerManaged.name, () => {
       queues: [
         {
           queueName,
+          dql: {
+            queueName: `${queueName}-dql`,
+          },
           listener,
         },
       ],
@@ -140,6 +146,9 @@ describe(QueueListenerManaged.name, () => {
       queues: [
         {
           queueName,
+          dql: {
+            queueName: `${queueName}-dlq`,
+          },
           listener,
         },
       ],
@@ -148,6 +157,7 @@ describe(QueueListenerManaged.name, () => {
     const queueUrls = queueListenerManaged.getAllQueueUrls();
     expect(queueUrls).toEqual([
       `${process.env.SQS_QUEUE_BASE_URL}/${queueName}`,
+      `${process.env.SQS_QUEUE_BASE_URL}/${queueName}-dlq`,
     ]);
   });
 
@@ -167,8 +177,8 @@ describe(QueueListenerManaged.name, () => {
       queueListenerManaged.addListener(queueName, new TestQueueListener());
       queueListenerManaged.start();
 
-      const listeners = queueListenerManaged.getAllQueueUrls();
-      expect(listeners).toHaveLength(1);
+      const queues = queueListenerManaged.getAllQueueUrls();
+      expect(queues).toHaveLength(1);
 
       queueListenerManaged.stop();
     });

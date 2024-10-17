@@ -11,6 +11,9 @@ interface ListenerManager {
 
 type QueueListenerManagedArguments = {
   queueName: string;
+  dql?: {
+    queueName: string;
+  };
   listener: QueueListener;
 };
 type ListenerManagedArguments = {
@@ -33,7 +36,13 @@ class QueueListenerManaged implements ListenerManager {
   }
 
   public getAllQueueUrls(): string[] {
-    return Array.from(this.listeners.keys());
+    const queues = [];
+    for (const queue of this.queues) {
+      queues.push(`${process.env.SQS_QUEUE_BASE_URL}/${queue.queueName}`);
+      if (queue.dql)
+        queues.push(`${process.env.SQS_QUEUE_BASE_URL}/${queue.dql.queueName}`);
+    }
+    return queues;
   }
 
   public getListeners(): SQSListener[] {
@@ -49,10 +58,12 @@ class QueueListenerManaged implements ListenerManager {
   }
 
   addListener(queueName: string, listener: QueueListener): void {
-    this.listeners.set(
-      `${process.env.SQS_QUEUE_BASE_URL}/${queueName}`,
-      this.buildListener(queueName, listener)
-    );
+    const queueUrl = `${process.env.SQS_QUEUE_BASE_URL}/${queueName}`;
+    this.queues.push({
+      queueName,
+      listener,
+    });
+    this.listeners.set(queueUrl, this.buildListener(queueName, listener));
   }
 
   private buildListener(
