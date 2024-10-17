@@ -1,5 +1,4 @@
 import { retry } from "async";
-import { randomUUID } from "node:crypto";
 import { Message } from "@aws-sdk/client-sqs";
 import {
   QueueListener,
@@ -7,6 +6,7 @@ import {
 } from "@jeordanecarlosbatista/jcb-aws-sqs";
 import { TestSetupSQS } from "@lib/test-setup-queue";
 import { IntegrationTestManage } from "@lib/test-manager";
+import { faker } from "@faker-js/faker/.";
 
 class listenerManagerMock extends QueueListener {
   async handleMessage(message: Message): Promise<void> {
@@ -27,12 +27,7 @@ class TestSetup extends IntegrationTestManage {
         pollingInterval: 1000,
         receiveMaxNumberOfMessages: 1,
         waitTimeSeconds: 20,
-        queues: [
-          {
-            queueName: "hello-world.fifo",
-            listener: new listenerManagerMock(),
-          },
-        ],
+        queues: [],
       }),
     });
 
@@ -52,16 +47,20 @@ describe(IntegrationTestManage.name, () => {
       const testSetup = new TestSetup();
       const queue = testSetup.queue();
 
+      const queueName = faker.string.alphanumeric(10);
+      await queue.sqsClient.createQueue(queueName);
+
+      queue.listenerManager.addListener(queueName, new listenerManagerMock());
+
+      await queue.run();
       await testSetup.run(async () => {
         await queue.sendMessage({
           payload: "Hello, World!",
-          queueName: "hello-world.fifo",
-          messageGroupId: randomUUID(),
-          messageDeduplicationId: randomUUID(),
+          queueName: queueName,
         });
 
         await retry({ times: 50, interval: 300 }, async () => {
-          const messages = await queue.getAttributes("hello-world.fifo");
+          const messages = await queue.getAttributes(queueName);
           expect(messages.Attributes?.ApproximateNumberOfMessages).toBe("0");
         });
       });

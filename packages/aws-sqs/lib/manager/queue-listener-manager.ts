@@ -5,6 +5,7 @@ import { QueueListener } from "@lib/queue-listener";
 interface ListenerManager {
   start(): void;
   stop(): void;
+  addListener(queueName: string, listener: QueueListener): void;
   getAllQueueUrls(): string[];
 }
 
@@ -32,9 +33,11 @@ class QueueListenerManaged implements ListenerManager {
   }
 
   public getAllQueueUrls(): string[] {
-    return this.queues.map(
-      ({ queueName }) => `${process.env.SQS_QUEUE_BASE_URL}/${queueName}`
-    );
+    return Array.from(this.listeners.keys());
+  }
+
+  public getListeners(): SQSListener[] {
+    return Array.from(this.listeners.values());
   }
 
   public start(): void {
@@ -42,25 +45,35 @@ class QueueListenerManaged implements ListenerManager {
   }
 
   public stop(): void {
-    this.listeners.forEach((listener) => listener.stop());
+    this.getListeners().forEach((listener) => listener.stop());
   }
 
-  private addListener(queueUrl: string, listener: SQSListener): void {
-    this.listeners.set(queueUrl, listener);
+  addListener(queueName: string, listener: QueueListener): void {
+    this.listeners.set(
+      `${process.env.SQS_QUEUE_BASE_URL}/${queueName}`,
+      this.buildListener(queueName, listener)
+    );
+  }
+
+  private buildListener(
+    queueName: string,
+    listener: QueueListener
+  ): SQSListener {
+    return new SQSListener({
+      sqsProvider: this.sqsProvider,
+      queueName,
+      listenerInstance: listener,
+      pollingInterval: this.args.pollingInterval,
+      receiveMaxNumberOfMessages: this.args.receiveMaxNumberOfMessages,
+      waitTimeSeconds: this.args.waitTimeSeconds,
+    });
   }
 
   private addAllListener() {
     this.queues.forEach(({ queueName, listener }) => {
-      this.addListener(
+      this.listeners.set(
         `${process.env.SQS_QUEUE_BASE_URL}/${queueName}`,
-        new SQSListener({
-          sqsProvider: this.sqsProvider,
-          queueName,
-          listenerInstance: listener,
-          pollingInterval: this.args.pollingInterval,
-          receiveMaxNumberOfMessages: this.args.receiveMaxNumberOfMessages,
-          waitTimeSeconds: this.args.waitTimeSeconds,
-        })
+        this.buildListener(queueName, listener)
       );
     });
   }

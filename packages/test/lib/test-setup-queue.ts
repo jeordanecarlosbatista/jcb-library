@@ -11,7 +11,7 @@ type TestSetupSQSArguments = {
 };
 
 export class TestSetupSQS {
-  private readonly listenerManager: ListenerManager;
+  readonly listenerManager: ListenerManager;
   private readonly sqsProvider: SQSProvider;
   private readonly enqueuer: Enqueuer;
 
@@ -19,8 +19,6 @@ export class TestSetupSQS {
     this.listenerManager = args.listenerManager;
     this.sqsProvider = SQSProvider.factory();
     this.enqueuer = EnqueuerProvider.factory();
-
-    this.run();
   }
 
   get sqsClient() {
@@ -43,13 +41,13 @@ export class TestSetupSQS {
     );
   }
 
-  private async run(): Promise<void> {
-    await this.purgeQueues();
+  async run(): Promise<void> {
     this.listenerManager.start();
   }
 
   async tearDown(): Promise<void> {
-    return Promise.resolve(this.listenerManager.stop());
+    this.listenerManager.stop();
+    return Promise.resolve();
   }
 
   async purgeQueue(queueName: string) {
@@ -58,11 +56,10 @@ export class TestSetupSQS {
     );
   }
 
-  private async purgeQueues() {
-    return Promise.all(
-      this.listenerManager
-        .getAllQueueUrls()
-        .map((queueUrl) => this.sqsProvider.purgeQueue(queueUrl))
+  async purgeQueues() {
+    const queueUrls = this.listenerManager.getAllQueueUrls();
+    await Promise.all(
+      queueUrls.map((queueUrl) => this.sqsProvider.purgeQueue(queueUrl))
     );
   }
 }
