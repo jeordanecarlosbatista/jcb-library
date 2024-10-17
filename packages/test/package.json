@@ -1,6 +1,6 @@
 {
   "name": "@jeordanecarlosbatista/test",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Test",
   "main": "index.js",
   "types": "./dist/index.d.ts",
@@ -77,7 +77,7 @@
     "testEnvironment": "node"
   },
   "peerDependencies": {
-    "@jeordanecarlosbatista/jcb-aws-sqs": "^1.0.19"
+    "@jeordanecarlosbatista/jcb-aws-sqs": "^1.0.20"
   },
   "engines": {
     "node": "20.17.0"
