@@ -5,12 +5,13 @@ import {
   SQSProvider,
 } from "@jeordanecarlosbatista/jcb-aws-sqs";
 import { EnqueueParams } from "@jeordanecarlosbatista/jcb-aws-sqs/dist/enqueuer";
+import { TestSetupService } from "./test-setup-service";
 
 type TestSetupSQSArguments = {
   listenerManager: ListenerManager;
 };
 
-export class TestSetupSQS {
+export class TestSetupSQS implements TestSetupService {
   readonly listenerManager: ListenerManager;
   private readonly sqsProvider: SQSProvider;
   private readonly enqueuer: Enqueuer;
