@@ -34,7 +34,8 @@ class TestSetup extends IntegrationTestManage {
     return this.queueSetup;
   };
 
-  override async run(callback: () => Promise<void>): Promise<void> {
+  // eslint-disable-next-line no-empty-pattern
+  override async run([], callback: () => Promise<void>): Promise<void> {
     await callback().finally(() => this.queueSetup?.tearDown());
   }
 }
@@ -53,7 +54,7 @@ describe(IntegrationTestManage.name, () => {
       queue.listenerManager.addListener(queueName, new listenerManagerMock());
 
       await queue.run();
-      await testSetup.run(async () => {
+      await testSetup.run([], async () => {
         await queue.sendMessage({
           payload: "Hello, World!",
           queueName: queueName,
