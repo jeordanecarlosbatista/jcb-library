@@ -15,14 +15,12 @@ class listenerManagerMock extends QueueListener {
 }
 
 class TestSetup extends IntegrationTestManage {
-  private queueSetup: TestSetupSQS | undefined;
-
   constructor() {
     super();
   }
 
-  queue = () => {
-    this.queueSetup = new TestSetupSQS({
+  queue = () =>
+    new TestSetupSQS({
       listenerManager: new QueueListenerManaged({
         pollingInterval: 1000,
         receiveMaxNumberOfMessages: 1,
@@ -30,14 +28,6 @@ class TestSetup extends IntegrationTestManage {
         queues: [],
       }),
     });
-
-    return this.queueSetup;
-  };
-
-  // eslint-disable-next-line no-empty-pattern
-  override async run([], callback: () => Promise<void>): Promise<void> {
-    await callback().finally(() => this.queueSetup?.tearDown());
-  }
 }
 
 describe(IntegrationTestManage.name, () => {
@@ -52,9 +42,7 @@ describe(IntegrationTestManage.name, () => {
       await queue.sqsClient.createQueue(queueName);
 
       queue.listenerManager.addListener(queueName, new listenerManagerMock());
-
-      await queue.run();
-      await testSetup.run([], async () => {
+      await testSetup.run([queue], async () => {
         await queue.sendMessage({
           payload: "Hello, World!",
           queueName: queueName,
