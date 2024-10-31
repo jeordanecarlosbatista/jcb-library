@@ -47,8 +47,8 @@ export class TestSetupSQS implements TestSetupService {
   }
 
   async tearDown(): Promise<void> {
+    await this.purgeQueues();
     this.listenerManager.stop();
-    return Promise.resolve();
   }
 
   async purgeQueue(queueName: string) {
