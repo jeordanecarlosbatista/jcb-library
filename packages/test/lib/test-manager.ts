@@ -7,13 +7,13 @@ export abstract class IntegrationTestManage {
 
   async run(
     services: TestSetupService[],
-    callback: () => Promise<void>
+    callback: (services: TestSetupService[]) => Promise<void>
   ): Promise<void> {
     for (const service of services) {
       await service.run();
     }
 
-    await callback();
+    await callback(services);
 
     for (const service of services) {
       await service.tearDown();
